@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sweatera/core/theme/app_theme.dart';
+import 'package:sweatera/features/auth/data/repositories/auth_repository.dart';
 import 'package:sweatera/features/auth/data/repositories/auth_repository_provider.dart';
 import 'package:sweatera/features/auth/presentation/widgets/auth_button.dart';
 import 'package:sweatera/features/auth/presentation/widgets/auth_text_field.dart';

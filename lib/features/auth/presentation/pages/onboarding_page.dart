@@ -7,8 +7,11 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sweatera/core/theme/app_theme.dart';
+import 'package:sweatera/features/auth/domain/providers/auth_provider.dart';
 import 'package:sweatera/features/auth/presentation/widgets/auth_button.dart';
 import 'package:sweatera/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:sweatera/features/profile/data/models/user_model.dart';
+import 'package:sweatera/features/profile/data/repositories/user_repository_provider.dart';
 import 'package:sweatera/routes/app_router.dart';
 
 /// Onboarding Page — collects username, gender, weight, and age
@@ -36,15 +39,58 @@ class OnboardingPage extends HookConsumerWidget {
 
     Future<void> completeOnboarding() async {
       if (!formKey.currentState!.validate()) return;
-      if (selectedGender.value == null) return;
+      if (selectedGender.value == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select your gender.')),
+        );
+        return;
+      }
 
       isLoading.value = true;
-      // TODO: save to Firestore via UserRepository
-      await Future.delayed(const Duration(milliseconds: 800));
-      isLoading.value = false;
+      try {
+        final currentUser = ref.read(currentUserProvider);
+        if (currentUser == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: No authenticated user found.')),
+          );
+          isLoading.value = false;
+          return;
+        }
 
-      if (context.mounted) {
-        context.go(AppRoutes.dashboard);
+        final userRepo = ref.read(userRepositoryProvider);
+        final username = usernameController.text.trim().toLowerCase();
+
+        // Check if username is unique
+        final isUnique = await userRepo.isUsernameUnique(username);
+        if (!isUnique) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Username is already taken. Please try another.')),
+          );
+          isLoading.value = false;
+          return;
+        }
+
+        final userProfile = UserModel(
+          uid: currentUser.uid,
+          username: username,
+          email: currentUser.email ?? '',
+          gender: selectedGender.value!,
+          weight: double.parse(weightController.text),
+          age: int.parse(ageController.text),
+          createdAt: DateTime.now(),
+        );
+
+        await userRepo.createUserProfile(userProfile);
+        isLoading.value = false;
+
+        if (context.mounted) {
+          context.go(AppRoutes.dashboard);
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to complete onboarding: $e')),
+        );
+        isLoading.value = false;
       }
     }
 
