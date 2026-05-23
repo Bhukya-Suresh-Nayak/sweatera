@@ -283,9 +283,7 @@ class _QuickStartCTAs extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Starting Run tracker... (Phase 5)')),
-              );
+              context.push(AppRoutes.running);
             },
           ),
         ),

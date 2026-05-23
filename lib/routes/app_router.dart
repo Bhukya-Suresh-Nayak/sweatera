@@ -8,6 +8,7 @@ import 'package:sweatera/features/auth/presentation/pages/otp_page.dart';
 import 'package:sweatera/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:sweatera/features/dashboard/presentation/pages/app_shell.dart';
 import 'package:sweatera/features/workouts/presentation/pages/workout_tracking_page.dart';
+import 'package:sweatera/features/running/presentation/pages/running_tracker_page.dart';
 import 'package:sweatera/features/auth/domain/providers/auth_provider.dart';
 
 part 'app_router.g.dart';
@@ -106,6 +107,14 @@ GoRouter appRouter(Ref ref) {
         pageBuilder: (context, state) => _slideTransition(
           state: state,
           child: const WorkoutTrackingPage(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.running,
+        name: 'running',
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const RunningTrackerPage(),
         ),
       ),
     ],
