@@ -5,7 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sweatera/core/theme/app_theme.dart';
 import 'package:sweatera/features/profile/data/models/user_model.dart';
 import 'package:sweatera/features/profile/data/repositories/user_profile_provider.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:sweatera/routes/app_router.dart';
 /// DashboardPage — The visual cornerstone of the SweatEra athletic experience.
 /// Implements beautiful glowing glass cards, streak trackers, and workout progress grids.
 class DashboardPage extends ConsumerWidget {
@@ -267,9 +268,7 @@ class _QuickStartCTAs extends StatelessWidget {
             icon: Icons.camera_front_rounded,
             gradient: AppTheme.brandGradient,
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Starting Live Pose tracking... (Phase 4)')),
-              );
+              context.push(AppRoutes.workouts);
             },
           ),
         ),
